@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 	"net/http"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/rwboyer/ginapi/models"
 )
 
-var db = opendb("root:root@tcp(127.0.0.1:8889)/mccrery_grief?parseTime=true")
+var db = opendb(os.Getenv("APIDB"))
 
 func opendb(dbstring string) (*sql.DB) {
 	db, err := sql.Open("mysql", dbstring)
