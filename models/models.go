@@ -7,11 +7,11 @@ import (
 type Vigil struct {
 	Id int
 	Date time.Time
-	//Obit string
+	Obit string
 	Name string
-	//Email string
-	//Phone string
+	Email string
+	Phone string
 	Text string
-	//Candle string
-	//Img string
+	Candle string
+	Img string
 }

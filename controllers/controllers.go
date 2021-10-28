@@ -11,7 +11,7 @@ import (
 	"github.com/rwboyer/ginapi/models"
 )
 
-var db = opendb("root:root@root(127.0.0.1:8889)/mccrery_grief")
+var db = opendb("root:root@tcp(127.0.0.1:8889)/mccrery_grief?parseTime=true")
 
 func opendb(dbstring string) (*sql.DB) {
 	db, err := sql.Open("mysql", dbstring)
@@ -22,7 +22,7 @@ func opendb(dbstring string) (*sql.DB) {
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)	
-	defer db.Close()
+	//defer db.Close()
 
 	return db
 }
@@ -39,11 +39,7 @@ func GetUser(c *gin.Context) {
 	var vigils []models.Vigil
 	var vigil models.Vigil
 
-	newdb, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/mccrery_grief?parseTime=true")
-	if( err != nil){
-		fmt.Println(err.Error())
-	}
-	rows, err := newdb.Query("select cid, date, name, text from vigil_log;")
+	rows, err := db.Query("select cid, date, name, text from vigil_log;")
 	if( err != nil){
 		fmt.Println(err.Error())
 	}
@@ -59,5 +55,30 @@ func GetUser(c *gin.Context) {
 }
 
 func GetUserDetail(c *gin.Context){
-	c.JSON(http.StatusOK, nil)
+	var vigils []models.Vigil
+	var vigil models.Vigil
+
+	obit := c.Param("obit")
+	rows, err := db.Query("select * from vigil_log where obit = ?;", obit)
+	if( err != nil){
+		fmt.Println(err.Error())
+	}
+	for rows.Next() {
+		err := rows.Scan(
+			&vigil.Id,
+			&vigil.Date, 
+			&vigil.Obit, 
+			&vigil.Name,
+			&vigil.Email,
+			&vigil.Phone,
+			&vigil.Text,
+			&vigil.Candle,
+			&vigil.Img)
+		vigils = append(vigils, vigil)
+		if( err != nil){
+			fmt.Println(err.Error())
+		}
+	}
+	defer rows.Close()
+	c.JSON(http.StatusOK, vigils)
 }

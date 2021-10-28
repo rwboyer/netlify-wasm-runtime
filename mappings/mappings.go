@@ -13,7 +13,7 @@ func CreateUrlMappings()  {
 	Router.Use(controllers.Cors())
 	v1 := Router.Group("/v1")
 	{
-		v1.GET("/users/:id", controllers.GetUserDetail)
+		v1.GET("/fong/:id/*obit", controllers.GetUserDetail)
 		v1.GET("/users/", controllers.GetUser)
 	}
 }
