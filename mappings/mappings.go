@@ -16,6 +16,7 @@ func CreateUrlMappings()  {
 		v1.GET("/fong/:id/*obit", controllers.GetObitDetail)
 		v1.GET("/users/", controllers.GetObit)
 		v1.POST("/img/", controllers.ImgPost)
+		v1.POST("/imgfun/", controllers.ImgPostFun)
 	}
 	Router.Static("/file", "saved")
 }

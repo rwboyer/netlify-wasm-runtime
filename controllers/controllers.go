@@ -3,13 +3,16 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
+	//"math"
 	"os"
 	"io/ioutil"
 	"time"
 	"log"
 	"net/http"
 	"image"
+	"image/color"
 	"image/jpeg"
+	_ "image/png"
 	"github.com/nfnt/resize"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -128,6 +131,45 @@ func ImgPost(c *gin.Context){
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "file uploaded successfully",
+		//"pathname": u.EscapedPath(),
+	})
+}
+
+
+func ImgPostFun(c *gin.Context){
+
+	var ascii_art string
+
+	var grayRamp = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,\"^`\\"
+	var rampLength = len(grayRamp);
+
+	//const getCharacterForGrayScale = grayScale => grayRamp[Math.ceil((rampLength - 1) * grayScale / 255)];
+
+	file, err := c.FormFile("img")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f, _ := file.Open()
+	defer f.Close()
+	imData, imType, err := image.Decode(f)
+	log.Println(imType)	
+	newImage := resize.Resize(80, 0, imData, resize.Lanczos3)	
+
+	//levels := []string{" ", "░", "▒", "▓", "█"}
+
+	for y := newImage.Bounds().Min.Y; y < newImage.Bounds().Max.Y; y++ {
+		for x := newImage.Bounds().Min.X; x < newImage.Bounds().Max.X; x++ {
+				c := color.GrayModel.Convert(newImage.At(x, y)).(color.Gray)
+				level := (rampLength - 1) * int(c.Y) / 255
+				ascii_art = fmt.Sprint(ascii_art + string(grayRamp[level]))
+		}
+		ascii_art = fmt.Sprint( ascii_art + "\n")
+	}
+	fmt.Print(ascii_art)
+
+	c.JSON(http.StatusOK, gin.H{
+		"ascii":  ascii_art,
 		//"pathname": u.EscapedPath(),
 	})
 }
