@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"io/ioutil"
 	"time"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,7 +38,7 @@ func Cors() gin.HandlerFunc {
 	}
 }
 
-func GetUser(c *gin.Context) {
+func GetObit(c *gin.Context) {
 	var vigils []models.Vigil
 	var vigil models.Vigil
 
@@ -64,7 +66,7 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, vigils)
 }
 
-func GetUserDetail(c *gin.Context){
+func GetObitDetail(c *gin.Context){
 	var vigils []models.Vigil
 	var vigil models.Vigil
 
@@ -91,4 +93,33 @@ func GetUserDetail(c *gin.Context){
 	}
 	defer rows.Close()
 	c.JSON(http.StatusOK, vigils)
+}
+
+func ImgPost(c *gin.Context){
+	file, err := c.FormFile("img")
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	log.Println(file.Filename)
+	dir, _ := os.Getwd()
+	log.Println(dir)
+
+	f, _ := file.Open()
+	defer f.Close()
+	fileBytes, err := ioutil.ReadAll(f)
+	tempFile, err := ioutil.TempFile("../saved", "upload-*.jpg")
+	defer tempFile.Close()
+	tempFile.Write(fileBytes)
+
+	//log.Println(fileBytes)
+	err = c.SaveUploadedFile(file, "../saved/"+file.Filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "file uploaded successfully",
+		//"pathname": u.EscapedPath(),
+	})
 }
