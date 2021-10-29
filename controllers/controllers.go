@@ -8,7 +8,9 @@ import (
 	"time"
 	"log"
 	"net/http"
-
+	"image"
+	"image/jpeg"
+	"github.com/nfnt/resize"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/rwboyer/ginapi/models"
@@ -107,10 +109,16 @@ func ImgPost(c *gin.Context){
 
 	f, _ := file.Open()
 	defer f.Close()
-	fileBytes, err := ioutil.ReadAll(f)
+	imData, imType, err := image.Decode(f)
+	log.Println(imType)	
+	newImage := resize.Resize(600, 0, imData, resize.Lanczos3)	
+
+	//fileBytes, err := ioutil.ReadAll(f)
 	tempFile, err := ioutil.TempFile("../saved", "upload-*.jpg")
 	defer tempFile.Close()
-	tempFile.Write(fileBytes)
+	err = jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
+
+	//tempFile.Write(fileBytes)
 
 	//log.Println(fileBytes)
 	err = c.SaveUploadedFile(file, "../saved/"+file.Filename)
