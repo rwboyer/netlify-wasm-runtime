@@ -169,8 +169,9 @@ func ImgPostFun(c *gin.Context){
 	}
 	fmt.Print(ascii_art)
 
-	c.JSON(http.StatusOK, gin.H{
-		"ascii":  ascii_art,
-		//"pathname": u.EscapedPath(),
-	})
+	//c.JSON(http.StatusOK, gin.H{
+	//	"ascii":  ascii_art,
+	//	//"pathname": u.EscapedPath(),
+	//})
+	c.HTML(http.StatusOK, "img.tmpl", gin.H{"Art": ascii_art})
 }

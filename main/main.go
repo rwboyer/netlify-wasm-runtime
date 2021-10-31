@@ -5,6 +5,7 @@ import(
 )
 
 func main () {
+	//mappings.Router.LoadHTMLGlob("templates/*.tmpl")
 	mappings.CreateUrlMappings()
 	mappings.Router.Run(":1111")
 }

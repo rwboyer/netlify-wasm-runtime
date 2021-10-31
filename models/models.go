@@ -5,13 +5,13 @@ import (
 )
 
 type Vigil struct {
-	Id int
-	Date time.Time
-	Obit string
-	Name string
-	Email string
-	Phone string
-	Text string
-	Candle string
-	Img string
+	Id int							`json:"cid"`
+	Date time.Time			`json:"date"`
+	Obit string					`json:"obit"`	
+	Name string					`json:"name"`
+	Email string				`json:"email"`
+	Phone string				`json:"phone"`
+	Text string					`json:"text"`
+	Candle string				`json:"candle"`
+	Img string					`json:"img"`
 }

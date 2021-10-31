@@ -9,6 +9,8 @@ var Router *gin.Engine
 
 func CreateUrlMappings()  {
 	Router = gin.Default()
+	Router.LoadHTMLGlob("../templates/*.tmpl")
+
 
 	Router.Use(controllers.Cors())
 	v1 := Router.Group("/v1")
