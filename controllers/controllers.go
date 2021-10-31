@@ -29,7 +29,7 @@ func opendb(dbstring string) (*sql.DB) {
 
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)	
+	db.SetMaxIdleConns(5)	
 	//defer db.Close()
 
 	return db
@@ -42,6 +42,7 @@ func Cors() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
 
 func GetObit(c *gin.Context) {
 	var vigils []models.Vigil
