@@ -3,7 +3,6 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
-	//"math"
 	"os"
 	"io/ioutil"
 	"time"
@@ -30,7 +29,6 @@ func opendb(dbstring string) (*sql.DB) {
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(5)	
-	//defer db.Close()
 
 	return db
 }
@@ -117,14 +115,10 @@ func ImgPost(c *gin.Context){
 	log.Println(imType)	
 	newImage := resize.Resize(600, 0, imData, resize.Lanczos3)	
 
-	//fileBytes, err := ioutil.ReadAll(f)
 	tempFile, err := ioutil.TempFile("../saved", "upload-*.jpg")
 	defer tempFile.Close()
 	err = jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
 
-	//tempFile.Write(fileBytes)
-
-	//log.Println(fileBytes)
 	err = c.SaveUploadedFile(file, "../saved/"+file.Filename)
 	if err != nil {
 		log.Fatal(err)
@@ -132,7 +126,6 @@ func ImgPost(c *gin.Context){
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "file uploaded successfully",
-		//"pathname": u.EscapedPath(),
 	})
 }
 
@@ -143,8 +136,6 @@ func ImgPostFun(c *gin.Context){
 
 	var grayRamp = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,\"^`\\"
 	var rampLength = len(grayRamp);
-
-	//const getCharacterForGrayScale = grayScale => grayRamp[Math.ceil((rampLength - 1) * grayScale / 255)];
 
 	file, err := c.FormFile("img")
 	if err != nil {
@@ -157,13 +148,11 @@ func ImgPostFun(c *gin.Context){
 	log.Println(imType)	
 	newImage := resize.Resize(80, 0, imData, resize.Lanczos3)	
 
-	//levels := []string{" ", "░", "▒", "▓", "█"}
-
 	for y := newImage.Bounds().Min.Y; y < newImage.Bounds().Max.Y; y++ {
 		for x := newImage.Bounds().Min.X; x < newImage.Bounds().Max.X; x++ {
 				c := color.GrayModel.Convert(newImage.At(x, y)).(color.Gray)
 				level := (rampLength - 1) * int(c.Y) / 255
-				ascii_art = fmt.Sprint(ascii_art + string(grayRamp[level]))
+				ascii_art = fmt.Sprint(ascii_art + string(grayRamp[level]) + string(grayRamp[level]))
 		}
 		ascii_art = fmt.Sprint( ascii_art + "\n")
 	}
@@ -173,5 +162,6 @@ func ImgPostFun(c *gin.Context){
 	//	"ascii":  ascii_art,
 	//	//"pathname": u.EscapedPath(),
 	//})
+
 	c.HTML(http.StatusOK, "img.tmpl", gin.H{"Art": ascii_art})
 }
