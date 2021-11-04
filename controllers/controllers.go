@@ -42,126 +42,133 @@ func Cors() gin.HandlerFunc {
 }
 
 
-func GetObit(c *gin.Context) {
-	var vigils []models.Vigil
-	var vigil models.Vigil
+func GetObit() gin.HandlerFunc {
+		return func (c *gin.Context) {
+		var vigils []models.Vigil
+		var vigil models.Vigil
 
-	rows, err := db.Query("select * from vigil_log")
-	if( err != nil){
-		fmt.Println(err.Error())
-	}
-	for rows.Next() {
-		err := rows.Scan(
-			&vigil.Id,
-			&vigil.Date, 
-			&vigil.Obit, 
-			&vigil.Name,
-			&vigil.Email,
-			&vigil.Phone,
-			&vigil.Text,
-			&vigil.Candle,
-			&vigil.Img)
-			if( err != nil){
-				fmt.Println(err.Error())
-			}
-			vigils = append(vigils, vigil)
-	}
-	defer rows.Close()
-	c.JSON(http.StatusOK, vigils)
-}
-
-func GetObitDetail(c *gin.Context){
-	var vigils []models.Vigil
-	var vigil models.Vigil
-
-	obit := c.Param("obit")
-	rows, err := db.Query("select * from vigil_log where obit = ?;", obit)
-	if( err != nil){
-		fmt.Println(err.Error())
-	}
-	for rows.Next() {
-		err := rows.Scan(
-			&vigil.Id,
-			&vigil.Date, 
-			&vigil.Obit, 
-			&vigil.Name,
-			&vigil.Email,
-			&vigil.Phone,
-			&vigil.Text,
-			&vigil.Candle,
-			&vigil.Img)
-		vigils = append(vigils, vigil)
+		rows, err := db.Query("select * from vigil_log")
 		if( err != nil){
 			fmt.Println(err.Error())
 		}
-	}
-	defer rows.Close()
-	c.JSON(http.StatusOK, vigils)
-}
-
-func ImgPost(c *gin.Context){
-	file, err := c.FormFile("img")
-	if err != nil {
-		log.Fatal(err)
-	}
-	
-	log.Println(file.Filename)
-	dir, _ := os.Getwd()
-	log.Println(dir)
-
-	f, _ := file.Open()
-	defer f.Close()
-	imData, imType, err := image.Decode(f)
-	log.Println(imType)	
-	newImage := resize.Resize(600, 0, imData, resize.Lanczos3)	
-
-	tempFile, err := ioutil.TempFile("saved", "upload-*.jpg")
-	defer tempFile.Close()
-	err = jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
-
-	err = c.SaveUploadedFile(file, "saved/"+file.Filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message":  "file uploaded successfully",
-	})
-}
-
-
-func ImgPostFun(c *gin.Context){
-
-	var ascii_art string
-
-	var grayRamp = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,\"^`\\"
-	var rampLength = len(grayRamp);
-
-	file, err := c.FormFile("img")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	f, _ := file.Open()
-	defer f.Close()
-	imData, imType, err := image.Decode(f)
-	log.Println(imType)	
-	newImage := resize.Resize(80, 0, imData, resize.Lanczos3)	
-
-	for y := newImage.Bounds().Min.Y; y < newImage.Bounds().Max.Y; y++ {
-		for x := newImage.Bounds().Min.X; x < newImage.Bounds().Max.X; x++ {
-				c := color.GrayModel.Convert(newImage.At(x, y)).(color.Gray)
-				level := (rampLength - 1) * int(c.Y) / 255
-				ascii_art = fmt.Sprint(ascii_art + string(grayRamp[level]) + string(grayRamp[level]))
+		for rows.Next() {
+			err := rows.Scan(
+				&vigil.Id,
+				&vigil.Date, 
+				&vigil.Obit, 
+				&vigil.Name,
+				&vigil.Email,
+				&vigil.Phone,
+				&vigil.Text,
+				&vigil.Candle,
+				&vigil.Img)
+				if( err != nil){
+					fmt.Println(err.Error())
+				}
+				vigils = append(vigils, vigil)
 		}
-		ascii_art = fmt.Sprint( ascii_art + "\n")
+		defer rows.Close()
+		c.JSON(http.StatusOK, vigils)
 	}
-	fmt.Print(ascii_art)
+}
 
-	//c.JSON(http.StatusOK, gin.H{
-	//	"ascii":  ascii_art,
-	//	//"pathname": u.EscapedPath(),
-	//})
+func GetObitDetail() gin.HandlerFunc {
+	return func (c *gin.Context){
+		var vigils []models.Vigil
+		var vigil models.Vigil
 
-	c.HTML(http.StatusOK, "img.tmpl", gin.H{"Art": ascii_art})
+		obit := c.Param("obit")
+		rows, err := db.Query("select * from vigil_log where obit = ?;", obit)
+		if( err != nil){
+			fmt.Println(err.Error())
+		}
+		for rows.Next() {
+			err := rows.Scan(
+				&vigil.Id,
+				&vigil.Date, 
+				&vigil.Obit, 
+				&vigil.Name,
+				&vigil.Email,
+				&vigil.Phone,
+				&vigil.Text,
+				&vigil.Candle,
+				&vigil.Img)
+			vigils = append(vigils, vigil)
+			if( err != nil){
+				fmt.Println(err.Error())
+			}
+		}
+		defer rows.Close()
+		c.JSON(http.StatusOK, vigils)
+	}
+}
+
+func ImgPost() gin.HandlerFunc {
+	return func (c *gin.Context){
+		file, err := c.FormFile("img")
+		if err != nil {
+			log.Fatal(err)
+		}
+		
+		log.Println(file.Filename)
+		dir, _ := os.Getwd()
+		log.Println(dir)
+
+		f, _ := file.Open()
+		defer f.Close()
+		imData, imType, err := image.Decode(f)
+		log.Println(imType)	
+		newImage := resize.Resize(600, 0, imData, resize.Lanczos3)	
+
+		tempFile, err := ioutil.TempFile("saved", "upload-*.jpg")
+		defer tempFile.Close()
+		err = jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
+
+		err = c.SaveUploadedFile(file, "saved/"+file.Filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message":  "file uploaded successfully",
+		})
+	}
+}
+
+func ImgPostFun() gin.HandlerFunc {
+	return func (c *gin.Context){
+
+		var ascii_art string
+
+		var grayRamp = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,\"^`\\"
+		var rampLength = len(grayRamp);
+
+		file, err := c.FormFile("img")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		f, _ := file.Open()
+		defer f.Close()
+		imData, imType, err := image.Decode(f)
+		log.Println(imType)	
+		newImage := resize.Resize(80, 0, imData, resize.Lanczos3)	
+
+		for y := newImage.Bounds().Min.Y; y < newImage.Bounds().Max.Y; y++ {
+			for x := newImage.Bounds().Min.X; x < newImage.Bounds().Max.X; x++ {
+					c := color.GrayModel.Convert(newImage.At(x, y)).(color.Gray)
+					level := (rampLength - 1) * int(c.Y) / 255
+					ascii_art = fmt.Sprint(ascii_art + string(grayRamp[level]) + string(grayRamp[level]))
+			}
+			ascii_art = fmt.Sprint( ascii_art + "\n")
+		}
+		fmt.Print(ascii_art)
+
+		//c.JSON(http.StatusOK, gin.H{
+		//	"ascii":  ascii_art,
+		//	//"pathname": u.EscapedPath(),
+		//})
+
+		c.HTML(http.StatusOK, "img.tmpl", gin.H{"Art": ascii_art})
+	}
 }
