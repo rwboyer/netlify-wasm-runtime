@@ -13,7 +13,7 @@ func GetObit() gin.HandlerFunc {
 	var vigils []models.Vigil
 	var vigil models.Vigil
 
-	rows, err := db.Query("select * from vigil_log")
+	rows, err := models.Db.Query("select * from vigil_log")
 	if( err != nil){
 		fmt.Println(err.Error())
 	}
