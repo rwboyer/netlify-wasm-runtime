@@ -1,10 +1,10 @@
 package main
 
-import(
+import (
 	"github.com/rwboyer/ginapi/mappings"
 )
 
-func main () {
+func main() {
 	//mappings.Router.LoadHTMLGlob("templates/*.tmpl")
 	mappings.CreateUrlMappings()
 	mappings.Router.Run(":1111")

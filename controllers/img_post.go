@@ -15,12 +15,12 @@ import (
 )
 
 func ImgPost() gin.HandlerFunc {
-	return func (c *gin.Context){
+	return func(c *gin.Context) {
 		file, err := c.FormFile("img")
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+
 		log.Println(file.Filename)
 		dir, _ := os.Getwd()
 		log.Println(dir)
@@ -28,7 +28,7 @@ func ImgPost() gin.HandlerFunc {
 		f, _ := file.Open()
 		defer f.Close()
 		imData, _, _ := image.Decode(f)
-		newImage := resize.Resize(600, 0, imData, resize.Lanczos3)	
+		newImage := resize.Resize(600, 0, imData, resize.Lanczos3)
 
 		tempFile, _ := ioutil.TempFile("saved", "upload-*.jpg")
 		defer tempFile.Close()
@@ -37,7 +37,7 @@ func ImgPost() gin.HandlerFunc {
 		c.SaveUploadedFile(file, "saved/"+file.Filename)
 
 		c.JSON(http.StatusOK, gin.H{
-			"message":  "file uploaded successfully",
+			"message": "file uploaded successfully",
 		})
 	}
 }

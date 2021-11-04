@@ -1,16 +1,15 @@
 package mappings
 
-import(
-	"github.com/rwboyer/ginapi/controllers" 
+import (
 	"github.com/gin-gonic/gin"
+	"github.com/rwboyer/ginapi/controllers"
 )
 
-var Router *gin.Engine 
+var Router *gin.Engine
 
-func CreateUrlMappings()  {
+func CreateUrlMappings() {
 	Router = gin.Default()
 	Router.LoadHTMLGlob("templates/*.tmpl")
-
 
 	Router.Use(controllers.Cors())
 	v1 := Router.Group("/v1")
