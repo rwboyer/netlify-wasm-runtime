@@ -115,11 +115,11 @@ func ImgPost(c *gin.Context){
 	log.Println(imType)	
 	newImage := resize.Resize(600, 0, imData, resize.Lanczos3)	
 
-	tempFile, err := ioutil.TempFile("../saved", "upload-*.jpg")
+	tempFile, err := ioutil.TempFile("saved", "upload-*.jpg")
 	defer tempFile.Close()
 	err = jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
 
-	err = c.SaveUploadedFile(file, "../saved/"+file.Filename)
+	err = c.SaveUploadedFile(file, "saved/"+file.Filename)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -9,7 +9,7 @@ var Router *gin.Engine
 
 func CreateUrlMappings()  {
 	Router = gin.Default()
-	Router.LoadHTMLGlob("../templates/*.tmpl")
+	Router.LoadHTMLGlob("templates/*.tmpl")
 
 
 	Router.Use(controllers.Cors())
@@ -20,5 +20,5 @@ func CreateUrlMappings()  {
 		v1.POST("/img/", controllers.ImgPost)
 		v1.POST("/imgfun/", controllers.ImgPostFun)
 	}
-	Router.Static("/file", "../saved")
+	Router.Static("/file", "saved")
 }
