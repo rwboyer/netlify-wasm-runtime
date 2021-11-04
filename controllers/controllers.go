@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/rwboyer/ginapi/util"
 	"database/sql"
 	"fmt"
 	"os"
@@ -9,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"image"
-	"image/color"
 	"image/jpeg"
 	_ "image/png"
 	"github.com/nfnt/resize"
@@ -138,11 +138,6 @@ func ImgPost() gin.HandlerFunc {
 func ImgPostFun() gin.HandlerFunc {
 	return func (c *gin.Context){
 
-		var ascii_art string
-
-		var grayRamp = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,\"^`\\"
-		var rampLength = len(grayRamp);
-
 		file, err := c.FormFile("img")
 		if err != nil {
 			log.Fatal(err)
@@ -150,19 +145,7 @@ func ImgPostFun() gin.HandlerFunc {
 
 		f, _ := file.Open()
 		defer f.Close()
-		imData, imType, err := image.Decode(f)
-		log.Println(imType)	
-		newImage := resize.Resize(80, 0, imData, resize.Lanczos3)	
-
-		for y := newImage.Bounds().Min.Y; y < newImage.Bounds().Max.Y; y++ {
-			for x := newImage.Bounds().Min.X; x < newImage.Bounds().Max.X; x++ {
-					c := color.GrayModel.Convert(newImage.At(x, y)).(color.Gray)
-					level := (rampLength - 1) * int(c.Y) / 255
-					ascii_art = fmt.Sprint(ascii_art + string(grayRamp[level]) + string(grayRamp[level]))
-			}
-			ascii_art = fmt.Sprint( ascii_art + "\n")
-		}
-		fmt.Print(ascii_art)
+		ascii_art, err := util.AsciiArt(f)
 
 		c.HTML(http.StatusOK, "img.tmpl", gin.H{"Art": ascii_art})
 	}
