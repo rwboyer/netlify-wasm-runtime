@@ -1,21 +1,22 @@
 package controllers
 
 import (
-	"github.com/rwboyer/ginapi/util"
 	"database/sql"
 	"fmt"
-	"os"
-	"io/ioutil"
-	"time"
-	"log"
-	"net/http"
 	"image"
 	"image/jpeg"
 	_ "image/png"
-	"github.com/nfnt/resize"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/nfnt/resize"
 	"github.com/rwboyer/ginapi/models"
+	"github.com/rwboyer/ginapi/util"
 )
 
 var db = opendb(os.Getenv("APIDB"))
@@ -116,18 +117,14 @@ func ImgPost() gin.HandlerFunc {
 
 		f, _ := file.Open()
 		defer f.Close()
-		imData, imType, err := image.Decode(f)
-		log.Println(imType)	
+		imData, _, _ := image.Decode(f)
 		newImage := resize.Resize(600, 0, imData, resize.Lanczos3)	
 
-		tempFile, err := ioutil.TempFile("saved", "upload-*.jpg")
+		tempFile, _ := ioutil.TempFile("saved", "upload-*.jpg")
 		defer tempFile.Close()
-		err = jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
+		jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
 
-		err = c.SaveUploadedFile(file, "saved/"+file.Filename)
-		if err != nil {
-			log.Fatal(err)
-		}
+		c.SaveUploadedFile(file, "saved/"+file.Filename)
 
 		c.JSON(http.StatusOK, gin.H{
 			"message":  "file uploaded successfully",
@@ -141,11 +138,20 @@ func ImgPostFun() gin.HandlerFunc {
 		file, err := c.FormFile("img")
 		if err != nil {
 			log.Fatal(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":  err.Error(),
+			})
 		}
 
 		f, _ := file.Open()
 		defer f.Close()
 		ascii_art, err := util.AsciiArt(f)
+		if err != nil{
+			log.Fatal(err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":  err.Error(),
+			})
+		}
 
 		c.HTML(http.StatusOK, "img.tmpl", gin.H{"Art": ascii_art})
 	}
