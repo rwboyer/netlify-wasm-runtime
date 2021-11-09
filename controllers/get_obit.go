@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/rwboyer/ginapi/models"
 	"net/http"
+	"encoding/json"
 )
 
-func GetObit() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func GetObit() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		var vigils []models.Vigil
 		var vigil models.Vigil
 
@@ -32,7 +32,12 @@ func GetObit() gin.HandlerFunc {
 			}
 			vigils = append(vigils, vigil)
 		}
+
 		defer rows.Close()
-		c.JSON(http.StatusOK, vigils)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+
+		j, _ := json.Marshal(vigils)
+		w.Write(j)
 	}
 }

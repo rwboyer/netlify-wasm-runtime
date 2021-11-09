@@ -1,19 +1,22 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/rwboyer/ginapi/models"
+	_ "log"
 	"net/http"
+	"github.com/go-chi/chi/v5"
+	"github.com/rwboyer/ginapi/models"
 )
 
-func GetObitDetail() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func GetObitDetail() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		var vigils []models.Vigil
 		var vigil models.Vigil
 
-		obit := c.Param("obit")
-		rows, err := models.Db.Query("select * from vigil_log where obit = ?;", obit)
+		obit := chi.URLParam(r, "*")
+	
+		rows, err := models.Db.Query("select * from vigil_log where obit = ?;", "/" + obit)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
@@ -34,6 +37,10 @@ func GetObitDetail() gin.HandlerFunc {
 			}
 		}
 		defer rows.Close()
-		c.JSON(http.StatusOK, vigils)
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+
+		j, _ := json.Marshal(vigils)
+		w.Write(j)
 	}
 }
