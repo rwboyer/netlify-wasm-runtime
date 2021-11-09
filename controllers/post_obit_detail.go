@@ -8,6 +8,12 @@ import (
 	_ "mime/multipart"
 	_ "github.com/go-chi/chi/v5"
 	"github.com/rwboyer/ginapi/models"
+	"image"
+	"image/jpeg"
+	_ "image/png"
+	"io/ioutil"
+	"os"
+	"github.com/nfnt/resize"
 )
 
 func PostObitDetail() http.HandlerFunc {
@@ -29,9 +35,30 @@ func PostObitDetail() http.HandlerFunc {
 		vigil.Text = r.MultipartForm.Value["message"][0]
 		vigil.Obit = o
 
-		
 		log.Println(o)
-	
+
+		fheader := r.MultipartForm.File["pic"]
+		if fheader == nil {
+			log.Println("no upload")
+		} else {
+
+		log.Println(fheader[0].Filename)
+		dir, _ := os.Getwd()
+		log.Println(dir)
+
+		f, _ := fheader[0].Open()
+		defer f.Close()
+		imData, _, _ := image.Decode(f)
+		newImage := resize.Resize(600, 0, imData, resize.Lanczos3)
+
+		tempFile, _ := ioutil.TempFile("saved", "upload-*.jpg")
+		defer tempFile.Close()
+		jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
+		vigil.Img = tempFile.Name()
+
+		//r.SaveUploadedFile(file, "saved/"+file.Filename)
+		}
+
 		sqlStatement := `
 		INSERT INTO vigil_log (obit, name, email, phone, text, candle, img)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`
