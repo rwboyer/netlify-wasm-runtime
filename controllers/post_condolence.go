@@ -3,12 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	_ "github.com/go-chi/chi/v5"
-	"github.com/rwboyer/ginapi/models"
-	"github.com/rwboyer/ginapi/util"
 	"log"
 	"net/http"
-	"net/smtp"
+	"github.com/rwboyer/ginapi/models"
+	"github.com/rwboyer/ginapi/util"
 )
 
 func PostCondolence() http.HandlerFunc {
@@ -45,8 +43,6 @@ func PostCondolence() http.HandlerFunc {
 		from := "condolences@mccreryandharra.com"
 		to := make([]string, 0)
 		to = append(to, "rwboyer@mac.com") //data.Data.To)
-
-		smtp.SendMail("localhost", nil, from, to, []byte(message))
 
 		util.Mailer(to, from, fmt.Sprintf("Condolence from %s", data.Data.Name), []byte(message), &header)
 
