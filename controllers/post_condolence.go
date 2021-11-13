@@ -37,23 +37,18 @@ func PostCondolence() http.HandlerFunc {
 			json.NewEncoder(w).Encode("Recaptcha Fail")
 		}
 
-		reply_to := data.Data.Email
 		header := make(map[string]string)
-		header["reply-to"] = reply_to
-		message := ""
-		for k, v := range header {
-			message += fmt.Sprintf("%s: %s\r\n", k, v)
-		}
+		header["reply-to"] = data.Data.Email
 
-		message += "\r\n" + fmt.Sprintf("Message: %s\n\nPhone: %s\n", data.Data.Message, data.Data.Phone)
+		message := fmt.Sprintf("Message: %s\n\nPhone: %s\n", data.Data.Message, data.Data.Phone)
+		
 		from := "condolences@mccreryandharra.com"
-		from = "condolences@ob.cdox.cc"
 		to := make([]string, 0)
 		to = append(to, "rwboyer@mac.com")//data.Data.To)
 
 		smtp.SendMail("localhost", nil, from, to, []byte(message))
 
-		util.Mailer(to, from, "Condolence", data.Data.Message, &header)
+		util.Mailer(to, from, fmt.Sprintf("Condolence from %s", data.Data.Name), []byte(message), &header)
 
 		sqlStatement := `
 		INSERT INTO condolence_log (obit, name, email, phone, text)
