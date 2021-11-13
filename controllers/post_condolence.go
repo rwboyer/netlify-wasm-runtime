@@ -47,10 +47,13 @@ func PostCondolence() http.HandlerFunc {
 
 		message += "\r\n" + fmt.Sprintf("Message: %s\n\nPhone: %s\n", data.Data.Message, data.Data.Phone)
 		from := "condolences@mccreryandharra.com"
+		from = "condolences@ob.cdox.cc"
 		to := make([]string, 0)
 		to = append(to, "rwboyer@mac.com")//data.Data.To)
 
 		smtp.SendMail("localhost", nil, from, to, []byte(message))
+
+		util.Mailer(to, from, "Condolence", data.Data.Message, &header)
 
 		sqlStatement := `
 		INSERT INTO condolence_log (obit, name, email, phone, text)
