@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	_ "fmt"
-	_ "fmt"
 	"image"
 	"image/jpeg"
 	_ "image/png"
