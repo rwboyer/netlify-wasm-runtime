@@ -3,17 +3,20 @@ package controllers
 import (
 	"encoding/json"
 	_ "fmt"
-	"log"
-	"net/http"
-	_ "mime/multipart"
-	_ "github.com/go-chi/chi/v5"
-	"github.com/rwboyer/ginapi/models"
+	_ "fmt"
 	"image"
 	"image/jpeg"
 	_ "image/png"
 	"io/ioutil"
+	"log"
+	_ "mime/multipart"
+	"net/http"
+	_ "net/smtp"
 	"os"
+
+	_ "github.com/go-chi/chi/v5"
 	"github.com/nfnt/resize"
+	"github.com/rwboyer/ginapi/models"
 )
 
 func PostObitDetail() http.HandlerFunc {
@@ -28,9 +31,9 @@ func PostObitDetail() http.HandlerFunc {
 		vigil.Email = r.MultipartForm.Value["email"][0]
 		vigil.Phone = r.MultipartForm.Value["phone"][0]
 		if r.MultipartForm.Value["candle"] != nil {
-			vigil.Candle = "ON"
+			vigil.Candle = "on"
 		} else{
-			vigil.Candle = "OFF"
+			vigil.Candle = "off"
 		}
 		vigil.Text = r.MultipartForm.Value["message"][0]
 		vigil.Obit = o

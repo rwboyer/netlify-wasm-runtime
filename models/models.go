@@ -15,3 +15,15 @@ type Vigil struct {
 	Candle string    `json:"candle"`
 	Img    string    `json:"img"`
 }
+
+type Condolence struct{
+	Id      int       `json:"cid"`
+	Date    time.Time `json:"date"`
+	Obit 		string		`json:"refer"`
+	Name		string		`json:"name"`
+	Email		string		`json:"email"`
+	To 			string		`json:"to"`
+	Phone		string		`json:"phone"`
+	Message	string		`json:"message"`
+	Gresp		string		`json:"gresponse"`
+}
