@@ -3,13 +3,13 @@ package controllers
 import (
 	"encoding/json"
 	_ "fmt"
+	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
-	"github.com/go-chi/chi/v5"
 )
 
-func GetHello() http.HandlerFunc{
-	return func (w http.ResponseWriter, r *http.Request) {
+func GetHello() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 		log.Println(name)
 		w.WriteHeader(http.StatusOK)

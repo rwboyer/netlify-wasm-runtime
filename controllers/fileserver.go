@@ -1,9 +1,9 @@
 package controllers
 
-import(
-	"strings"
-	"net/http"
+import (
 	"github.com/go-chi/chi/v5"
+	"net/http"
+	"strings"
 )
 
 func FileServer(r chi.Router, path string, root http.FileSystem) {

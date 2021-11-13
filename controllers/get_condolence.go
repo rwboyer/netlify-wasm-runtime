@@ -1,11 +1,11 @@
 package controllers
 
-import(
+import (
 	"encoding/json"
-	"net/http"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/rwboyer/ginapi/models"
+	"net/http"
 )
 
 func GetCondolence() http.HandlerFunc {
@@ -15,7 +15,7 @@ func GetCondolence() http.HandlerFunc {
 
 		obit := chi.URLParam(r, "*")
 
-		rows, err := models.Db.Query("select * from condolence_log where obit = ?;", "/" + obit)
+		rows, err := models.Db.Query("select * from condolence_log where obit = ?;", "/"+obit)
 		if err != nil {
 			fmt.Println(err.Error())
 		}

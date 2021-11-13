@@ -18,6 +18,7 @@ type SiteVerifyResponse struct {
 }
 
 const siteVerifyURL = "https://www.google.com/recaptcha/api/siteverify"
+
 var secret = os.Getenv("RECAPTCHA_SECRET")
 
 func CheckRecaptcha(response string) error {

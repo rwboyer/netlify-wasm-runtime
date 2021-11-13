@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"github.com/rwboyer/ginapi/mappings"
+	"net/http"
 )
 
 func main() {

@@ -31,7 +31,7 @@ func PostObitDetail() http.HandlerFunc {
 		vigil.Phone = r.MultipartForm.Value["phone"][0]
 		if r.MultipartForm.Value["candle"] != nil {
 			vigil.Candle = "on"
-		} else{
+		} else {
 			vigil.Candle = "off"
 		}
 		vigil.Text = r.MultipartForm.Value["message"][0]
@@ -44,29 +44,29 @@ func PostObitDetail() http.HandlerFunc {
 			log.Println("no upload")
 		} else {
 
-		log.Println(fheader[0].Filename)
-		dir, _ := os.Getwd()
-		log.Println(dir)
+			log.Println(fheader[0].Filename)
+			dir, _ := os.Getwd()
+			log.Println(dir)
 
-		f, _ := fheader[0].Open()
-		defer f.Close()
-		imData, _, _ := image.Decode(f)
-		newImage := resize.Resize(600, 0, imData, resize.Lanczos3)
+			f, _ := fheader[0].Open()
+			defer f.Close()
+			imData, _, _ := image.Decode(f)
+			newImage := resize.Resize(600, 0, imData, resize.Lanczos3)
 
-		tempFile, _ := ioutil.TempFile("saved", "upload-*.jpg")
-		defer tempFile.Close()
-		jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
-		vigil.Img = tempFile.Name()
+			tempFile, _ := ioutil.TempFile("saved", "upload-*.jpg")
+			defer tempFile.Close()
+			jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
+			vigil.Img = tempFile.Name()
 
-		//r.SaveUploadedFile(file, "saved/"+file.Filename)
+			//r.SaveUploadedFile(file, "saved/"+file.Filename)
 		}
 
 		sqlStatement := `
 		INSERT INTO vigil_log (obit, name, email, phone, text, candle, img)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`
-		_, err := models.Db.Exec(sqlStatement, 
-			vigil.Obit, 
-			vigil.Name, 
+		_, err := models.Db.Exec(sqlStatement,
+			vigil.Obit,
+			vigil.Name,
 			vigil.Email,
 			vigil.Phone,
 			vigil.Text,

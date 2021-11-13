@@ -3,10 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	_ "log"
-	"net/http"
 	"github.com/go-chi/chi/v5"
 	"github.com/rwboyer/ginapi/models"
+	_ "log"
+	"net/http"
 )
 
 func GetObitDetail() http.HandlerFunc {
@@ -15,8 +15,8 @@ func GetObitDetail() http.HandlerFunc {
 		var vigil models.Vigil
 
 		obit := chi.URLParam(r, "*")
-	
-		rows, err := models.Db.Query("select * from vigil_log where obit = ?;", "/" + obit)
+
+		rows, err := models.Db.Query("select * from vigil_log where obit = ?;", "/"+obit)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
