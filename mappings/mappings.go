@@ -34,6 +34,7 @@ func CreateUrlMappings() {
 	Router.Post("/vigil", controllers.PostObitDetail())
 	Router.Get("/vigil", controllers.GetObit())
 	Router.Get("/hello/{name}", controllers.GetHello())
+	Router.Get("/condolence/{id}*", controllers.GetCondolence())
 	Router.Post("/condolence", controllers.PostCondolence())
 	//Router.Post("/img/", controllers.ImgPost())
 	//Router.Post("/imgfun/", controllers.ImgPostFun())
