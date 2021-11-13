@@ -8,6 +8,7 @@ import (
 	"net/smtp"
 	_ "github.com/go-chi/chi/v5"
 	"github.com/rwboyer/ginapi/models"
+	"github.com/rwboyer/ginapi/util"
 )
 
 func PostCondolence() http.HandlerFunc {
@@ -26,6 +27,14 @@ func PostCondolence() http.HandlerFunc {
 			w.Header().Set("Content-Type", "application/json")
 
 			json.NewEncoder(w).Encode("boom")
+		}
+
+		err = util.CheckRecaptcha(data.Data.Gresp)
+		if err != nil{
+			w.WriteHeader(http.StatusServiceUnavailable)
+			w.Header().Set("Content-Type", "application/json")
+
+			json.NewEncoder(w).Encode("Recaptcha Fail")
 		}
 
 		reply_to := data.Data.Email

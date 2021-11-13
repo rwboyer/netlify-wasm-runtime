@@ -11,7 +11,8 @@
       "mode": "auto",
       "program": "${fileDirname}",
       "env": {
-        "APIDB": "root:root@tcp(127.0.0.1:8889)/mccrery_grief?parseTime=true"
+        "APIDB": "root:root@tcp(127.0.0.1:8889)/mccrery_grief?parseTime=true",
+        "RECAPTCHA_SECRET": "6LcBMrQUAAAAAEq1DZMqakZV30kwDHjSR2jBaNpB"
       }
     }
   ]

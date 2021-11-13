@@ -1,10 +1,11 @@
 package util
 
-import(
-	"net/http"
+import (
 	"encoding/json"
-	"time"
 	"errors"
+	"net/http"
+	"os"
+	"time"
 )
 
 type SiteVerifyResponse struct {
@@ -17,8 +18,9 @@ type SiteVerifyResponse struct {
 }
 
 const siteVerifyURL = "https://www.google.com/recaptcha/api/siteverify"
+var secret = os.Getenv("RECAPTCHA_SECRET")
 
-func CheckRecaptcha(secret, response string) error {
+func CheckRecaptcha(response string) error {
 
 	req, err := http.NewRequest(http.MethodPost, siteVerifyURL, nil)
 	if err != nil {
