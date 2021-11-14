@@ -3,9 +3,10 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"os"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var Db = opendb(os.Getenv("APIDB"))
