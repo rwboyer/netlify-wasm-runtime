@@ -33,3 +33,24 @@ type Preplan struct {
 	FirstName  string `json:"firstName"`
 	MiddleName string `json:"middleName"`
 }
+
+type GriefUser struct {
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Cdate  time.Time
+	Pub    string
+	Last   int
+	Remove string
+	Gresp  string `json:"gresponse"`
+}
+
+type GriefTemplate struct {
+	Id       int
+	Expire   time.Time
+	Subject  string
+	Content  string
+	Header   string
+	Title    string
+	FilePath string
+	FileName string
+}

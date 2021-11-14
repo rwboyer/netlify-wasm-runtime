@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"log"
 	"os"
 	"time"
 
@@ -42,7 +41,6 @@ func NewTextMailer(to []string, from string, sub string, msg string, hdrs *map[s
 	for _, r := range to {
 		err := t.m.AddRecipient(r)
 		if err != nil {
-			log.Println(err)
 			return nil, err
 		}
 	}
@@ -55,7 +53,6 @@ func NewHtmlMailer(to []string, from string, sub string, msg string, hdrs *map[s
 	var err error
 
 	if hm.TxtMailer, err = NewTextMailer(to, from, sub, msg, hdrs); err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -64,7 +61,9 @@ func NewHtmlMailer(to []string, from string, sub string, msg string, hdrs *map[s
 
 func (hm *HtmlMailer) Send(msg string) error {
 	hm.m.SetHtml(msg)
-	hm.TxtMailer.Send(msg)
+	if err := hm.TxtMailer.Send(msg); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -76,7 +75,6 @@ func (tm *TxtMailer) Send(msg string) error {
 	_, _, err := tm.mg.Send(ctx, tm.m)
 
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
