@@ -70,16 +70,8 @@ func PostGrief() http.HandlerFunc {
 		var tasks []interface{}
 		var placeholders []string
 		tdt := time.Now()
-		for i, et := range ets {
-			placeholders = append(placeholders,
-				fmt.Sprintf("($%d, $%d, $%d, $%d, $%d)",
-					i*5+1,
-					i*5+2,
-					i*5+3,
-					i*5+4,
-					i*5+5,
-				),
-			)
+		for _, et := range ets {
+			placeholders = append(placeholders, "(?, ?, ?, ?, ?)")
 			tasks = append(tasks, gr.Name, gr.Email, tdt, int(id), et.Id)
 			tdt = tdt.AddDate(0, 0, 7)
 		}
