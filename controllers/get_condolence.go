@@ -3,9 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/rwboyer/ginapi/models"
-	"net/http"
 )
 
 func GetCondolence() http.HandlerFunc {

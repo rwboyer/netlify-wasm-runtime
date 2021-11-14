@@ -3,8 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rwboyer/ginapi/models"
 	"net/http"
+
+	"github.com/rwboyer/ginapi/models"
 )
 
 func GetObit() http.HandlerFunc {

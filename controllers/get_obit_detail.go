@@ -3,10 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/rwboyer/ginapi/models"
 	_ "log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/rwboyer/ginapi/models"
 )
 
 func GetObitDetail() http.HandlerFunc {

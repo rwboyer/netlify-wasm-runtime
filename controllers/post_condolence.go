@@ -3,10 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
 	"github.com/rwboyer/ginapi/models"
 	"github.com/rwboyer/ginapi/util"
+	"log"
+	"net/http"
 )
 
 func PostCondolence() http.HandlerFunc {

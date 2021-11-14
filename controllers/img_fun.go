@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/rwboyer/ginapi/util"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/rwboyer/ginapi/util"
 )
 
 func ImgPostFun() gin.HandlerFunc {

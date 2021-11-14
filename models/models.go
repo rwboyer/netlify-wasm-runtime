@@ -28,8 +28,8 @@ type Condolence struct {
 	Gresp   string    `json:"gresponse"`
 }
 
-type Preplan struct{
-	LastName		string	`json:"lastName"`
-	FirstName		string	`json:"firstName"`
-	MiddleName	string	`json:"middleName"`
+type Preplan struct {
+	LastName   string `json:"lastName"`
+	FirstName  string `json:"firstName"`
+	MiddleName string `json:"middleName"`
 }

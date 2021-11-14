@@ -2,10 +2,11 @@ package util
 
 import (
 	"context"
-	"github.com/mailgun/mailgun-go/v4"
 	"log"
 	"os"
 	"time"
+
+	"github.com/mailgun/mailgun-go/v4"
 )
 
 var mailDomain = os.Getenv("MAIL_DOMAIN")

@@ -3,9 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	_ "fmt"
-	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func GetHello() http.HandlerFunc {

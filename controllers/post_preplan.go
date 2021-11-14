@@ -9,7 +9,7 @@ import (
 )
 
 func PostPreplan() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		var result map[string]interface{}
 
 		defer r.Body.Close()
