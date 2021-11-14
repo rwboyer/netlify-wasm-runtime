@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"reflect"
+
+	"github.com/rwboyer/ginapi/util"
 )
 
 func PostPreplan() http.HandlerFunc {
@@ -19,10 +22,18 @@ func PostPreplan() http.HandlerFunc {
 		log.Println(reflect.TypeOf(result))
 		log.Println(result)
 
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
+		templ, err := util.LoadPrePlanT()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		var buf bytes.Buffer
+		templ.Execute(&buf, result)
 
-		j, _ := json.Marshal(result)
-		w.Write(j)
+		w.WriteHeader(http.StatusOK)
+		//w.Header().Set("Content-Type", "application/json")
+
+		//j, _ := json.Marshal(result)
+		w.Write(buf.Bytes())
 	}
 }
