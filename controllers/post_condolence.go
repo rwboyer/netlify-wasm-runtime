@@ -34,6 +34,7 @@ func PostCondolence() http.HandlerFunc {
 			w.Header().Set("Content-Type", "application/json")
 
 			json.NewEncoder(w).Encode("Recaptcha Fail")
+			return
 		}
 
 		header := make(map[string]string)
@@ -47,11 +48,13 @@ func PostCondolence() http.HandlerFunc {
 
 		tm, err := util.NewTextMailer(to, from, fmt.Sprintf("Condolence from %s", data.Data.Name), message, &header)
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err)
 			return
 		}
 
 		if err = tm.Send(message); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err)
 			return
 		}
@@ -67,7 +70,9 @@ func PostCondolence() http.HandlerFunc {
 			data.Data.Message,
 		)
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err)
+			return
 		}
 
 		w.WriteHeader(http.StatusOK)

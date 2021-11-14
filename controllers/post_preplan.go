@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"reflect"
 
 	"github.com/rwboyer/ginapi/util"
 )
@@ -17,13 +16,17 @@ func PostPreplan() http.HandlerFunc {
 
 		defer r.Body.Close()
 		b, _ := io.ReadAll(r.Body)
-		json.Unmarshal(b, &result)
+		if err := json.Unmarshal(b, &result); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+			return
+		}
 
-		log.Println(reflect.TypeOf(result))
-		log.Println(result)
+		log.Printf("Raw map: %v", result)
 
 		templ, err := util.LoadPrePlanT()
 		if err != nil {
+			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -36,11 +39,13 @@ func PostPreplan() http.HandlerFunc {
 
 		tm, err := util.NewHtmlMailer(to, "preplanning@mccreryharra.com", "Testing HTML", "", &hdrs)
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err)
 			return
 		}
 
 		if err = tm.Send(buf.String()); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err)
 			return
 		}
