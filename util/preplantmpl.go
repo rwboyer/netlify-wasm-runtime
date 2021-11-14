@@ -8,7 +8,7 @@ import (
 const prePlanT = `
 <html>
 <head></head>
-<body>
+	<body>
 		<h1>Personal Information</h1>
 		<p>
 		{{.lastName}}, {{.firstName}} {{.middleName}}<br>
@@ -16,7 +16,38 @@ const prePlanT = `
 		{{.city}} {{.state}} {{.zip}}<br>
 		{{.county}}
 		</p>
-</body>
+		<p>
+		Maiden Name: {{.maidenName}}<br>
+		SSN: {{.ssn}}<br>
+		Birth Date: {{.birthDate}}<br>
+		Birth Place: {{.birthPlace}}<br>
+		email: {{.email}}
+		phone: {{.phone}}
+		</p>
+		<h1>Education / Employment Information</h1>
+		<p>
+		Employer: {{.employ}}<br>
+		Since: {{.employDate}}<br>
+		Job Title: {{.jobTitle}}<br>
+		Education: {{.education}}<br>
+		Service Branch: {{.serviceBranch}}
+		</p>
+		<h1>Family Information</h1>
+		<p>
+		Spouse Name: {{.spouseName}}<br>
+		Father's Name: {{.fatherName}}<br>
+		Mother's Name: {{.motherName}}<br>
+		</p>
+		<h1>Service Information</h1>
+		<p>
+		Officient Name: {{.officiantName}}<br>
+		Officient Phone: {{.officiantPhone}}<br>
+		Service Place: {{.servicePlace}}<br>
+		Cemetary: {{.cemetaryName}}<br>
+		Disposition: {{.dispositionPref}}<br>
+		Visitation: {{.visitation}}<br>
+		</p>
+	</body>
 </html>
 `
 
