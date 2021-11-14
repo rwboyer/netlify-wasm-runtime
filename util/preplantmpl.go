@@ -51,8 +51,8 @@ const prePlanT = `
 </html>
 `
 
-func LoadPrePlanT() (*template.Template, error) {
-	tmpl, err := template.New("prePlan").Parse(prePlanT)
+func LoadPrePlanT(name string) (*template.Template, error) {
+	tmpl, err := template.New(name).Parse(prePlanT)
 	if err != nil {
 		log.Println(err)
 		return nil, err

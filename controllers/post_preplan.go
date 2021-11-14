@@ -11,7 +11,13 @@ import (
 	"github.com/rwboyer/ginapi/util"
 )
 
-func PostPreplan() http.HandlerFunc {
+func PostPreplan(tmplName string) http.HandlerFunc {
+
+	templ, err := util.LoadPrePlanT(tmplName)
+	if err != nil {
+		log.Println(err)
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var result map[string]interface{}
 
@@ -25,12 +31,6 @@ func PostPreplan() http.HandlerFunc {
 
 		log.Printf("Raw map: %v", result)
 
-		templ, err := util.LoadPrePlanT()
-		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
 		var buf bytes.Buffer
 		templ.Execute(&buf, &result)
 
