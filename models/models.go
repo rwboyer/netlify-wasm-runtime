@@ -54,3 +54,14 @@ type GriefTemplate struct {
 	FilePath string
 	FileName string
 }
+
+type GriefTask struct {
+	Id         int
+	UserName   string
+	EmailId    string
+	TaskDate   time.Time
+	MailSent   string
+	UserId     int
+	TemplateId int
+	SentDate   time.Time
+}
