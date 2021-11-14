@@ -30,10 +30,25 @@ func PostPreplan() http.HandlerFunc {
 		var buf bytes.Buffer
 		templ.Execute(&buf, result)
 
-		w.WriteHeader(http.StatusOK)
-		//w.Header().Set("Content-Type", "application/json")
+		var hdrs = map[string]string{}
+		to := make([]string, 0)
+		to = append(to, "rwboyer@mac.com")
 
-		//j, _ := json.Marshal(result)
-		w.Write(buf.Bytes())
+		tm, err := util.NewHtmlMailer(to, "preplanning@mccreryharra.com", "Testing HTML", "", &hdrs)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		if err = tm.Send(buf.String()); err != nil {
+			log.Println(err)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+
+		j, _ := json.Marshal(result)
+		w.Write(j)
 	}
 }

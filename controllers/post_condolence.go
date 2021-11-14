@@ -3,10 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rwboyer/ginapi/models"
-	"github.com/rwboyer/ginapi/util"
 	"log"
 	"net/http"
+
+	"github.com/rwboyer/ginapi/models"
+	"github.com/rwboyer/ginapi/util"
 )
 
 func PostCondolence() http.HandlerFunc {
@@ -44,7 +45,16 @@ func PostCondolence() http.HandlerFunc {
 		to := make([]string, 0)
 		to = append(to, "rwboyer@mac.com") //data.Data.To)
 
-		util.Mailer(to, from, fmt.Sprintf("Condolence from %s", data.Data.Name), []byte(message), &header)
+		tm, err := util.NewTextMailer(to, from, fmt.Sprintf("Condolence from %s", data.Data.Name), message, &header)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		if err = tm.Send(message); err != nil {
+			log.Println(err)
+			return
+		}
 
 		sqlStatement := `
 		INSERT INTO condolence_log (obit, name, email, phone, text)
