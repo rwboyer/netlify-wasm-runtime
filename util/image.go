@@ -2,15 +2,32 @@ package util
 
 import (
 	"fmt"
-	"github.com/nfnt/resize"
 	"image"
 	"image/color"
-	_ "image/jpeg"
-	_ "image/png"
 	"io"
-	_ "io/ioutil"
 	"log"
+	"text/template"
+
+	"github.com/nfnt/resize"
 )
+
+const ascii_artT = `
+<html>
+	<pre>
+		{{ .Art }}
+	</pre>
+</html>
+`
+
+func LoadAsciiArtT(name string) (*template.Template, error) {
+	tmpl, err := template.New(name).Parse(ascii_artT)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return tmpl, nil
+}
 
 func AsciiArt(f io.Reader) (string, error) {
 	var ascii_art string
