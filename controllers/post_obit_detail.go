@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	_ "fmt"
+	"fmt"
 	"image"
 	"image/jpeg"
 	_ "image/png"
@@ -12,6 +12,7 @@ import (
 	"net/http"
 	_ "net/smtp"
 	"os"
+	"time"
 
 	_ "github.com/go-chi/chi/v5"
 	"github.com/nfnt/resize"
@@ -53,7 +54,10 @@ func PostObitDetail() http.HandlerFunc {
 			imData, _, _ := image.Decode(f)
 			newImage := resize.Resize(600, 0, imData, resize.Lanczos3)
 
-			tempFile, _ := ioutil.TempFile("saved", "upload-*.jpg")
+			t := time.Now()
+			d := fmt.Sprintf("saved/%04d%02d", t.Year(), t.Month())
+			os.Mkdir(d, 0755)
+			tempFile, _ := ioutil.TempFile(d, "upload-*.jpg")
 			defer tempFile.Close()
 			jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
 			vigil.Img = tempFile.Name()
