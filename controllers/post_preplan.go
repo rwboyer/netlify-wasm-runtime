@@ -36,7 +36,8 @@ func PostPreplan(tmplName string) http.HandlerFunc {
 
 		var hdrs = map[string]string{}
 		to := make([]string, 0)
-		to = append(to, "rwboyer@mac.com") //McCrery Address anne@mccreryandharra.com
+		to = append(to, "anne@mccreryandharra.com") //McCrery Address anne@mccreryandharra.com
+		//to = append(to, "rwboyer@mac.com") //McCrery Address anne@mccreryandharra.com
 		to = append(to, fmt.Sprintf("%v", result["email"]))
 
 		tm, err := util.NewHtmlMailer(to,

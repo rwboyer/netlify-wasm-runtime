@@ -28,8 +28,10 @@ func CreateUrlMappings() {
 
 	workDir, _ := os.Getwd()
 	filesDir := http.Dir(filepath.Join(workDir, "saved"))
+	legacyDir := http.Dir(filepath.Join(workDir, "uploads"))
 
 	controllers.FileServer(Router, "/saved", filesDir)
+	controllers.FileServer(Router, "/uploads", legacyDir)
 
 	Router.Get("/vigil/{id}*", controllers.GetObitDetail())
 	Router.Post("/vigil", controllers.PostObitDetail())
