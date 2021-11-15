@@ -39,7 +39,11 @@ func PostPreplan(tmplName string) http.HandlerFunc {
 		to = append(to, "rwboyer@mac.com") //McCrery Address anne@mccreryandharra.com
 		to = append(to, fmt.Sprintf("%v", result["email"]))
 
-		tm, err := util.NewHtmlMailer(to, "preplanning@mccreryharra.com", "Testing HTML", "", &hdrs)
+		tm, err := util.NewHtmlMailer(to,
+			"preplanning@mccreryharra.com",
+			"Testing HTML",
+			"",
+			&hdrs)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err)
