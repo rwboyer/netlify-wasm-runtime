@@ -39,7 +39,6 @@ func CreateUrlMappings() {
 	Router.Post("/condolence", controllers.PostCondolence())
 	Router.Post("/preplan", controllers.PostPreplan("prePlan"))
 	Router.Post("/grief", controllers.PostGrief())
-	//Router.Post("/img/", controllers.ImgPost())
 	Router.Post("/imgfun", controllers.ImagePostFun("ASCII"))
 	Router.NotFound(controllers.NotFound())
 }
