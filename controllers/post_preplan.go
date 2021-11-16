@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 
+	"github.com/go-chi/httplog"
 	"github.com/rwboyer/ginapi/util"
 )
 
@@ -15,21 +17,21 @@ func PostPreplan(tmplName string) http.HandlerFunc {
 
 	templ, err := util.LoadPrePlanT(tmplName)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var result map[string]interface{}
 
+		oplog := httplog.LogEntry(context.Background())
+
 		defer r.Body.Close()
 		b, _ := io.ReadAll(r.Body)
 		if err := json.Unmarshal(b, &result); err != nil {
+			oplog.Err(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
 			return
 		}
-
-		log.Printf("Raw map: %v", result)
 
 		var buf bytes.Buffer
 		templ.Execute(&buf, &result)
@@ -46,14 +48,14 @@ func PostPreplan(tmplName string) http.HandlerFunc {
 			"",
 			&hdrs)
 		if err != nil {
+			oplog.Err(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
 			return
 		}
 
 		if err = tm.Send(buf.String()); err != nil {
+			oplog.Err(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
 			return
 		}
 

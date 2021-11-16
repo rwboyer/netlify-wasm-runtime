@@ -8,15 +8,18 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/httplog"
 	"github.com/rwboyer/ginapi/controllers"
 )
 
 var Router = chi.NewRouter()
 
 func CreateUrlMappings() {
-	//Router.LoadHTMLGlob("templates/*.tmpl")
+	logger := httplog.NewLogger("go-mcc-log", httplog.Options{})
+	//Router.Use(middleware.Logger)
+	Router.Use(httplog.RequestLogger(logger))
+	Router.Use(middleware.Heartbeat("/ping"))
 
-	Router.Use(middleware.Logger)
 	Router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},

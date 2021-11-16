@@ -2,11 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
-	_ "log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/httplog"
 	"github.com/rwboyer/ginapi/models"
 )
 
@@ -15,12 +14,17 @@ func GetObitDetail() http.HandlerFunc {
 		var vigils []models.Vigil
 		var vigil models.Vigil
 
+		oplog := httplog.LogEntry(r.Context())
 		obit := chi.URLParam(r, "*")
 
 		rows, err := models.Db.Query("select * from vigil_log where obit = ?;", "/"+obit)
 		if err != nil {
-			fmt.Println(err.Error())
+			oplog.Err(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
+		defer rows.Close()
+
 		for rows.Next() {
 			err := rows.Scan(
 				&vigil.Id,
@@ -34,10 +38,10 @@ func GetObitDetail() http.HandlerFunc {
 				&vigil.Img)
 			vigils = append(vigils, vigil)
 			if err != nil {
-				fmt.Println(err.Error())
+				oplog.Err(err)
 			}
 		}
-		defer rows.Close()
+
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 

@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/httplog"
 	"github.com/rwboyer/ginapi/models"
 )
 
@@ -14,12 +14,17 @@ func GetCondolence() http.HandlerFunc {
 		var cond models.Condolence
 		var conds []models.Condolence
 
+		oplog := httplog.LogEntry(r.Context())
 		obit := chi.URLParam(r, "*")
 
 		rows, err := models.Db.Query("select * from condolence_log where obit = ?;", "/"+obit)
 		if err != nil {
-			fmt.Println(err.Error())
+			oplog.Err(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
+		defer rows.Close()
+
 		for rows.Next() {
 			err := rows.Scan(
 				&cond.Id,
@@ -32,10 +37,9 @@ func GetCondolence() http.HandlerFunc {
 			)
 			conds = append(conds, cond)
 			if err != nil {
-				fmt.Println(err.Error())
+				oplog.Err(err)
 			}
 		}
-		defer rows.Close()
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 

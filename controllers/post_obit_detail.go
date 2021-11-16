@@ -7,14 +7,13 @@ import (
 	"image/jpeg"
 	_ "image/png"
 	"io/ioutil"
-	"log"
 	_ "mime/multipart"
 	"net/http"
 	_ "net/smtp"
 	"os"
 	"time"
 
-	_ "github.com/go-chi/chi/v5"
+	"github.com/go-chi/httplog"
 	"github.com/nfnt/resize"
 	"github.com/rwboyer/ginapi/models"
 )
@@ -23,10 +22,12 @@ func PostObitDetail() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var vigil models.Vigil
 
-		//obit := chi.URLParam(r, "ref")
+		oplog := httplog.LogEntry(r.Context())
+
 		o := r.URL.Query().Get("ref")
-		//json.NewDecoder(r.Body).Decode(&vigil)
+
 		r.ParseMultipartForm(32 << 20)
+
 		vigil.Name = r.MultipartForm.Value["name"][0]
 		vigil.Email = r.MultipartForm.Value["email"][0]
 		vigil.Phone = r.MultipartForm.Value["phone"][0]
@@ -38,16 +39,12 @@ func PostObitDetail() http.HandlerFunc {
 		vigil.Text = r.MultipartForm.Value["message"][0]
 		vigil.Obit = o
 
-		log.Println(o)
-
 		fheader := r.MultipartForm.File["pic"]
 		if fheader == nil {
-			log.Println("no upload")
+			oplog.Info().Msg("no file uploaded")
 		} else {
 
-			log.Println(fheader[0].Filename)
-			dir, _ := os.Getwd()
-			log.Println(dir)
+			oplog.Info().Msg(fheader[0].Filename)
 
 			f, _ := fheader[0].Open()
 			defer f.Close()
@@ -62,7 +59,6 @@ func PostObitDetail() http.HandlerFunc {
 			jpeg.Encode(tempFile, newImage, &jpeg.Options{Quality: 50})
 			vigil.Img = tempFile.Name()
 
-			//r.SaveUploadedFile(file, "saved/"+file.Filename)
 		}
 
 		sqlStatement := `
@@ -78,7 +74,9 @@ func PostObitDetail() http.HandlerFunc {
 			vigil.Img,
 		)
 		if err != nil {
-			log.Println(err)
+			oplog.Err(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 		w.WriteHeader(http.StatusOK)

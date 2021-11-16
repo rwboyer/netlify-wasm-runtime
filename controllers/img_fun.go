@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 
+	"github.com/go-chi/httplog"
 	"github.com/rwboyer/ginapi/util"
 )
 
@@ -15,16 +15,17 @@ func ImagePostFun(nameT string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		var ascii_art string
-		//var err error
 		var buf bytes.Buffer
+
+		oplog := httplog.LogEntry(r.Context())
 
 		r.ParseMultipartForm(32 << 20)
 		fheader := r.MultipartForm.File["pic"]
 		if fheader == nil {
-			log.Println("no upload")
+			oplog.Error()
 		} else {
 
-			log.Println(fheader[0].Filename)
+			oplog.Info().Msg(fheader[0].Filename)
 
 			f, _ := fheader[0].Open()
 			defer f.Close()

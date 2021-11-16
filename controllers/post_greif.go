@@ -4,16 +4,18 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/go-chi/httplog"
 	"github.com/rwboyer/ginapi/models"
 )
 
 func PostGrief() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		oplog := httplog.LogEntry(r.Context())
 
 		gr := models.GriefUser{
 			Cdate:  time.Now(),
@@ -22,6 +24,11 @@ func PostGrief() http.HandlerFunc {
 			Remove: "n",
 		}
 		err := json.NewDecoder(r.Body).Decode(&gr)
+		if err != nil {
+			oplog.Err(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
 		var result sql.Result
 		name_insert := "INSERT INTO tbl_user (user_name, email_id, create_date, publish, last_template_sent, remove) VALUES (?, ?, ?, ?, ?, ?)"
@@ -34,11 +41,12 @@ func PostGrief() http.HandlerFunc {
 			gr.Remove,
 		)
 		if err != nil {
-			log.Println(err)
+			oplog.Err(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		id, _ := result.LastInsertId()
-		log.Printf("GRIEF USER CREATED SQL ID: %05d", id)
+		oplog.Info().Msgf("GRIEF USER CREATED SQL ID: %05d", id)
 
 		var rows *sql.Rows
 		var et models.GriefTemplate
@@ -46,9 +54,12 @@ func PostGrief() http.HandlerFunc {
 		email_template := "SELECT id, subject, email_content FROM tbl_email_template WHERE expire IS NULL ORDER BY ID;"
 		rows, err = models.Db.Query(email_template)
 		if err != nil {
-			log.Println(err.Error())
+			oplog.Err(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		defer rows.Close()
+
 		for rows.Next() {
 			err := rows.Scan(
 				&et.Id,
@@ -62,10 +73,9 @@ func PostGrief() http.HandlerFunc {
 			ets = append(ets, et)
 			//log.Printf("ROW: %v", et)
 			if err != nil {
-				fmt.Println(err.Error())
+				oplog.Err(err)
 			}
 		}
-		defer rows.Close()
 
 		var tasks []interface{}
 		var placeholders []string
@@ -75,7 +85,6 @@ func PostGrief() http.HandlerFunc {
 			tasks = append(tasks, gr.Name, gr.Email, tdt, int(id), et.Id)
 			tdt = tdt.AddDate(0, 0, 7)
 		}
-		log.Printf("TASKS: %v", tasks)
 
 		task_insert := fmt.Sprintf("INSERT INTO tbl_task ( user_name, email_id, task_date, user_id, template_id ) VALUES %s",
 			strings.Join(placeholders, ","),
@@ -83,7 +92,8 @@ func PostGrief() http.HandlerFunc {
 
 		_, err = models.Db.Exec(task_insert, tasks...)
 		if err != nil {
-			log.Println(err)
+			oplog.Err(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
