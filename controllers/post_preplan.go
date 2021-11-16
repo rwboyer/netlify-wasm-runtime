@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -23,7 +22,7 @@ func PostPreplan(tmplName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var result map[string]interface{}
 
-		oplog := httplog.LogEntry(context.Background())
+		oplog := httplog.LogEntry(r.Context())
 
 		defer r.Body.Close()
 		b, _ := io.ReadAll(r.Body)
